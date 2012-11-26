@@ -5,6 +5,7 @@ sdc = require('statsd-client').getOneClient
 
 host = process.env.REDIS_HOST or 'localhost'
 port = process.env.REDIS_PORT or 6379
+interval = process.env.REDIS_INTERVAL or 3000
 
 redis_cli = redis.createClient port, host
 preLabel = 'redis.'
@@ -23,4 +24,4 @@ do_stats = ->
 
 do_stats()
 
-setInterval do_stats, 10000
+setInterval do_stats, interval
