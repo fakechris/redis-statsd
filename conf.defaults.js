@@ -10,6 +10,10 @@ module.exports = {
       , "port" : 6379
     }
   ]
+  , "set" : [
+      "total_connections_received"
+    , "total_commands_processed"
+  ]
   , "gauge" : [
       "connected_clients"
     , "client_longest_output_list"
@@ -33,8 +37,6 @@ module.exports = {
     , "aof_rewrite_scheduled"
     , "aof_last_rewrite_time_sec"
     , "aof_current_rewrite_time_sec"
-    , "total_connections_received"
-    , "total_commands_processed"
     , "instantaneous_ops_per_sec"
     , "rejected_connections"
     , "expired_keys"

@@ -55,6 +55,15 @@ for redis_server in conf.redis_servers
                 # And also gauge for all?
                 sdc.gauge rootLabel + label, number
 
+              # And that it's in the configured gauge list
+              if conf.set.indexOf(label) isnt -1
+
+                # Then we gauge it.
+                sdc.set localLabel + label, number
+
+                # And also gauge for all?
+                sdc.set rootLabel + label, number
+
     do_stats()
 
     setInterval do_stats, conf.interval
