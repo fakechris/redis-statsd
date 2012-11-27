@@ -15,38 +15,40 @@ sdc = require('statsd-client').getOneClient
 # One redis-statsd client may operate for many redis servers
 for redis_server in conf.redis_servers
 
-  host = redis_server.host
-  port = redis_server.port
+  do (redis_server) ->
 
-  redis_cli = redis.createClient port, host
-  preLabel = 'redis.'
-  preLabel += host + port + '.'
+    host = redis_server.host
+    port = redis_server.port
 
-  # Our periodic function
-  do_stats = ->
-    redis_cli.info (err, reply) ->
+    redis_cli = redis.createClient port, host
+    preLabel = 'redis.'
+    preLabel += host + port + '.'
 
-      # We get a giant text object as "reply"
+    # Our periodic function
+    do_stats = ->
+      redis_cli.info (err, reply) ->
 
-      # First we split that on line breaks
-      reply_items = reply.split /\r\n/
-      for item in reply_items
+        # We get a giant text object as "reply"
 
-        # Then we split those on their : delimeter
-        item_split = item.split ':'
-        if item_split.length > 1
-          number = parseFloat item_split[1]
-          label = item_split[0]
+        # First we split that on line breaks
+        reply_items = reply.split /\r\n/
+        for item in reply_items
 
-          # We make sure it's a number for the value
-          if number + '' isnt 'NaN'
+          # Then we split those on their : delimeter
+          item_split = item.split ':'
+          if item_split.length > 1
+            number = parseFloat item_split[1]
+            label = item_split[0]
 
-            # And that it's in the configured gauge list
-            if conf.gauge.indexOf(label) isnt -1
+            # We make sure it's a number for the value
+            if number + '' isnt 'NaN'
 
-              # Then we gauge it.
-              sdc.gauge preLabel + label, number
+              # And that it's in the configured gauge list
+              if conf.gauge.indexOf(label) isnt -1
 
-  do_stats()
+                # Then we gauge it.
+                sdc.gauge preLabel + label, number
 
-  setInterval do_stats, conf.interval
+    do_stats()
+
+    setInterval do_stats, conf.interval
