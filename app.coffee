@@ -11,6 +11,8 @@ sdc = require('statsd-client').getOneClient
   host: conf.statsd.host
   port: conf.statsd.port
 
+rootLabel = 'redis.all.'
+
 
 # One redis-statsd client may operate for many redis servers
 for redis_server in conf.redis_servers
@@ -21,8 +23,9 @@ for redis_server in conf.redis_servers
     port = redis_server.port
 
     redis_cli = redis.createClient port, host
-    preLabel = 'redis.'
-    preLabel += host + port + '.'
+    localLabel = 'redis.'
+    localLabel += host.replace /\./g, ''
+    localLabel += '.' + port + '.'
 
     # Our periodic function
     do_stats = ->
@@ -47,7 +50,10 @@ for redis_server in conf.redis_servers
               if conf.gauge.indexOf(label) isnt -1
 
                 # Then we gauge it.
-                sdc.gauge preLabel + label, number
+                sdc.gauge localLabel + label, number
+
+                # And also gauge for all?
+                sdc.gauge rootLabel + label, number
 
     do_stats()
 
