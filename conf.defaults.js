@@ -13,6 +13,8 @@ module.exports = {
   , "set" : [
       "total_connections_received"
     , "total_commands_processed"
+    , "keyspace_hits"
+    , "keyspace_misses"
   ]
   , "gauge" : [
       "connected_clients"
@@ -41,8 +43,6 @@ module.exports = {
     , "rejected_connections"
     , "expired_keys"
     , "evicted_keys"
-    , "keyspace_hits"
-    , "keyspace_misses"
     , "pubsub_channels"
     , "pubsub_patterns"
     , "latest_fork_usec"
