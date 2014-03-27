@@ -1,15 +1,16 @@
 redis = require 'redis'
 conf = require './conf.defaults'
+node_client = require 'node-statsd-client'
 
 try
   conf = require './conf'
 catch error
-  
+
 
 # Only connects to one statsd server for now
-sdc = require('statsd-client').getOneClient
-  host: conf.statsd.host
-  port: conf.statsd.port
+sdc = new node_client.Client(conf.statsd.host, conf.statsd.port)
+#  host: conf.statsd.host
+#  port: conf.statsd.port
 
 rootLabel = 'redis.all.'
 
@@ -26,6 +27,9 @@ for redis_server in conf.redis_servers
     localLabel = 'redis.'
     localLabel += host.replace /\./g, ''
     localLabel += '.' + port + '.'
+
+    if redis_server.password
+      redis_cli.auth(redis_server.password)
 
     # Our periodic function
     do_stats = ->
